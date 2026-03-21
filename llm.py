@@ -30,7 +30,6 @@ If the context does not contain the answer, say:
 "I don't have enough information in the provided context."
 Do not use outside knowledge.
 
-
 Context:
 {context}
 
