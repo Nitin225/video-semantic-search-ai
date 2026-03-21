@@ -1,19 +1,32 @@
-#CONVERT VIDEOS TO MP3
+# CONVERT VIDEOS TO MP3
 import os
 import subprocess
 
 os.makedirs("audios", exist_ok=True)
 
-files = os.listdir("videos")
+video_extensions = (".mp4", ".mkv", ".avi", ".mov", ".flv", ".webm")
 
-for file in files:
-    # remove extension
-    file_name = os.path.splitext(file)[0]
+for file in os.listdir("videos"):
+    video_path = os.path.join("videos", file)
 
-    print(file_name)
+    # check valid video file
+    if os.path.isfile(video_path) and file.lower().endswith(video_extensions):
 
-    subprocess.run([
-        "ffmpeg",
-        "-i", f"videos/{file}",
-        f"audios/{file_name}.mp3"
-    ])
+        file_name = os.path.splitext(file)[0]
+        output_path = os.path.join("audios", f"{file_name}.mp3")
+
+        print(f"Processing: {file}")
+
+        try:
+            subprocess.run([
+                "ffmpeg",
+                "-y",              # overwrite automatically
+                "-i", video_path,
+                output_path
+            ], check=True)
+
+        except subprocess.CalledProcessError:
+            print(f"Error processing: {file}")
+
+    else:
+        print(f"Skipping: {file}")
