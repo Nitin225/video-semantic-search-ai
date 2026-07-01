@@ -2,39 +2,45 @@ import whisper
 import json
 import os
 
-model = whisper.load_model("small")
+def speech_to_text():
+    model = whisper.load_model("small")
 
-audios = os.listdir("audios")
+    audios = os.listdir("audios")
 
-for audio in audios:
-    if not audio.lower().endswith((".mp3", ".wav", ".m4a")):
-        continue
-    audio_path = os.path.join("audios", audio)
-    result = model.transcribe(
-        audio=audio_path,
-        task="translate", 
-        fp16=False
-    )
+    for audio in audios:
+        if not audio.lower().endswith((".mp3", ".wav", ".m4a")):
+            continue
 
-    # print(result["segments"])
-    chunks = []
+        audio_path = os.path.join("audios", audio)
 
-    for segment in result["segments"]:
-        chunks.append({
-            "source": audio,
-            "start": segment["start"], 
-            "end": segment["end"], 
-            "text": segment["text"]
-        })
+        result = model.transcribe(
+            audio=audio_path,
+            task="translate",
+            fp16=False
+        )
 
-    print(f"{audio} -> {len(chunks)} segments")
+        # print(result["segments"])
+        chunks = []
+
+        for segment in result["segments"]:
+            chunks.append({
+                "source": audio,
+                "start": segment["start"],
+                "end": segment["end"],
+                "text": segment["text"]
+            })
+
+        print(f"{audio} -> {len(chunks)} segments")
+
+        json_name = os.path.splitext(audio)[0] + ".json"
+
+        os.makedirs("json_files", exist_ok=True)
+
+        with open(f"json_files/{json_name}", "w", encoding="utf-8") as f:
+            json.dump(chunks, f, indent=4, ensure_ascii=False)
+
+    print("All audios processed!")
 
 
-    json_name = os.path.splitext(audio)[0] + ".json"
-            
-
-    os.makedirs("json_files", exist_ok=True)
-    with open(f"json_files/{json_name}", "w", encoding="utf-8") as f:
-        json.dump(chunks, f, indent=4, ensure_ascii=False)
-            
-print("All audios processed!")
+if __name__ == "__main__":
+    speech_to_text()
