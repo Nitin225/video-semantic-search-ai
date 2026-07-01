@@ -1,7 +1,11 @@
-import requests
+from groq import Groq
+from dotenv import load_dotenv
 import json
 import os
 
+load_dotenv()
+
+client = Groq(api_key=os.getenv("GROQ_API_KEY"))
 
 with open("chunks_with_source.json", "r", encoding="utf-8") as f:
     chunks = json.load(f)
@@ -37,36 +41,24 @@ Question: {query}
 
 Answer:
 """
+
     try:
-        response = requests.post(
-        os.getenv("OLLAMA_BASE_URL", "http://localhost:11434") + "/api/generate",
-        json={
-            "model": os.getenv("OLLAMA_MODEL", "llama3:8b"),
-            "prompt": prompt,
-            "stream": True,
-            "options": {
-                    "temperature": 0.2,
-                    "num_predict": 220
+        response = client.chat.completions.create(
+            model=os.getenv("GROQ_MODEL", "llama-3.1-8b-instant"),
+            messages=[
+                {
+                    "role": "user",
+                    "content": prompt
                 }
-            },
-            stream=True,
-            timeout=(10, 300),  # connect timeout, read timeout
+            ],
+            temperature=0.2,
+            max_tokens=220,
         )
-        response.raise_for_status()
 
-        answer = ""
-        for line in response.iter_lines():
-            if not line:
-                continue
-            try:
-                data = json.loads(line)
-            except json.JSONDecodeError:
-                continue
+        return (
+            response.choices[0].message.content.strip()
+            or "I don't have enough information in the provided context."
+        )
 
-            answer += data.get("response", "")
-        return answer.strip() or "I don't have enough information in the provided context."
-
-    except requests.exceptions.Timeout:
-        return "Model response timed out. Please try again or ask a shorter question."
-    except requests.exceptions.RequestException as e:
+    except Exception as e:
         return f"LLM service error: {e}"

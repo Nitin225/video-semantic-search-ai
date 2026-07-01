@@ -1,7 +1,9 @@
 streamlit
-requests
-numpy
 faiss-cpu
 sentence-transformers
+groq
+python-dotenv
 openai-whisper
-moviepy
+torch
+numpy
+requests

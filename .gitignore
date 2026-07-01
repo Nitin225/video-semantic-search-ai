@@ -8,3 +8,5 @@ embeddings.npy
 faiss.index
 __pycache__/
 *.pyc
+
+.env
