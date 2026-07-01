@@ -3,6 +3,7 @@ from process_videos import process_videos
 from speech_to_text import speech_to_text
 from read_chunks import embed_chunks, append_chunks
 from faiss_index import append_faiss
+from query import reload_index
 
 
 def run_incremental_pipeline(uploaded_file):
@@ -32,8 +33,11 @@ def run_incremental_pipeline(uploaded_file):
 
         # Step 6
         append_faiss(new_embeddings)
+        
+        # reload index
+        reload_index()
 
-        return True, "Video indexed successfully."
+        return True, "Video processed and indexed successfully."
 
     except Exception as e:
 
