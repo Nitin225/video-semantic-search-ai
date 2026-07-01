@@ -1,25 +1,40 @@
+from upload_utils import save_uploaded_video
 from process_videos import process_videos
 from speech_to_text import speech_to_text
-from read_chunks import read_chunks
-from faiss_index import create_faiss_index
+from read_chunks import embed_chunks, append_chunks
+from faiss_index import append_faiss
 
 
-def run_pipeline():
-    print("=" * 60)
-    print("Step 1/4 : Extracting Audio")
-    process_videos()
+def run_incremental_pipeline(uploaded_file):
 
-    print("=" * 60)
-    print("Step 2/4 : Transcribing")
-    speech_to_text()
+    try:
 
-    print("=" * 60)
-    print("Step 3/4 : Creating Embeddings")
-    read_chunks()
+        # Step 1
+        video_path = save_uploaded_video(uploaded_file)
 
-    print("=" * 60)
-    print("Step 4/4 : Building FAISS Index")
-    create_faiss_index()
+        # Step 2
+        audio_path = process_videos(video_path)
 
-    print("=" * 60)
-    print("Pipeline Completed Successfully!")
+        if audio_path is None:
+            return False, "Audio extraction failed."
+
+        # Step 3
+        json_path = speech_to_text(audio_path)
+
+        if json_path is None:
+            return False, "Transcription failed."
+
+        # Step 4
+        new_chunks, new_embeddings = embed_chunks(json_path)
+
+        # Step 5
+        append_chunks(new_chunks)
+
+        # Step 6
+        append_faiss(new_embeddings)
+
+        return True, "Video indexed successfully."
+
+    except Exception as e:
+
+        return False, str(e)
