@@ -3,33 +3,35 @@ import json
 import numpy as np
 from sentence_transformers import SentenceTransformer
 
-# load model
-model = SentenceTransformer('all-MiniLM-L6-v2')
 
-all_chunks = []
+def read_chunks():
+    # load model
+    model = SentenceTransformer("all-MiniLM-L6-v2")
 
-# load all json files
-for file in os.listdir("json_files"):
-    if not file.endswith(".json"):
-        continue
+    all_chunks = []
 
-    with open(f"json_files/{file}", "r", encoding="utf-8") as f:
-        data = json.load(f)   # list of chunks
-        all_chunks.extend(data)
+    # load all json files
+    for file in os.listdir("json_files"):
+        if not file.endswith(".json"):
+            continue
 
-print("Total chunks:", len(all_chunks))
+        with open(f"json_files/{file}", "r", encoding="utf-8") as f:
+            data = json.load(f)
+            all_chunks.extend(data)
 
-# extract text
-texts = [chunk["text"] for chunk in all_chunks]
+    print("Total chunks:", len(all_chunks))
 
-# generate embeddings 
-embeddings = model.encode(texts, show_progress_bar=True)
+    texts = [chunk["text"] for chunk in all_chunks]
 
-# save embeddings
-np.save("embeddings.npy", embeddings)
+    embeddings = model.encode(texts, show_progress_bar=True)
 
-# save metadata 
-with open("chunks_with_source.json", "w", encoding="utf-8") as f:
-    json.dump(all_chunks, f, indent=4, ensure_ascii=False)
+    np.save("embeddings.npy", embeddings)
 
-print("Embeddings created successfully!")
+    with open("chunks_with_source.json", "w", encoding="utf-8") as f:
+        json.dump(all_chunks, f, indent=4, ensure_ascii=False)
+
+    print("Embeddings created successfully!")
+
+
+if __name__ == "__main__":
+    read_chunks()
