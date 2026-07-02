@@ -1,15 +1,15 @@
 ---
-title: Video Semantic Search Ai
-emoji: 📉
+title: Video Semantic Search AI
+emoji: 🎥
 colorFrom: indigo
 colorTo: gray
 sdk: docker
+app_port: 8501
 pinned: false
 license: mit
-short_description: AI-powered RAG system for semantic video search and question
+short_description: AI-powered RAG system for semantic video search and question answering.
 ---
 
-Check out the configuration reference at https://huggingface.co/docs/hub/spaces-config-reference
 
 #  Video Semantic Search AI
 
