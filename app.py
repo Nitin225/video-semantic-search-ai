@@ -18,6 +18,8 @@ st.caption(
 
 st.header("Upload & Index")
 
+
+
 uploaded_file = st.file_uploader(
     "Choose a video",
     type=["mp4", "mkv", "avi", "mov", "webm"],
@@ -85,3 +87,4 @@ if query:
 
     else:
         st.info("Could not generate an answer right now.")
+        

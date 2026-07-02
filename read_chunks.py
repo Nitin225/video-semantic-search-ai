@@ -28,7 +28,11 @@ def read_chunks():
 
     texts = [chunk["text"] for chunk in all_chunks]
 
-    embeddings = model.encode(texts, show_progress_bar=True)
+    embeddings = model.encode(
+        texts,
+        show_progress_bar=True,
+        convert_to_numpy=True 
+    ).astype(np.float32)
 
     np.save("embeddings.npy", embeddings)
 
@@ -48,8 +52,9 @@ def embed_chunks(json_path):
 
     new_embeddings = model.encode(
         texts,
-        show_progress_bar=False
-    )
+        show_progress_bar=False,
+        convert_to_numpy=True 
+    ).astype(np.float32)
 
     return new_chunks, new_embeddings
 

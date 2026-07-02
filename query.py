@@ -1,6 +1,7 @@
 import faiss
 import json
 from sentence_transformers import SentenceTransformer
+import numpy as np
 
 model = SentenceTransformer("all-MiniLM-L6-v2")
 
@@ -17,7 +18,7 @@ def reload_index():
 # Load once when module is imported
 reload_index()
 
-def search(query, k=4):
+def search(query, k=6):
     if not chunks:
         return []
 
@@ -25,7 +26,10 @@ def search(query, k=4):
     if k <= 0:
         return []
 
-    query_embedding = model.encode([query])
+    query_embedding = model.encode(
+        [query],
+        convert_to_numpy=True
+    ).astype(np.float32)
 
     D, I = index.search(query_embedding, k)
 
