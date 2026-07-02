@@ -1,9 +1,11 @@
 streamlit
 faiss-cpu
 sentence-transformers
+transformers
 groq
 python-dotenv
 openai-whisper
 torch
+torchvision
 numpy
 requests
