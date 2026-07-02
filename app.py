@@ -18,17 +18,6 @@ st.set_page_config(
 
 #  Main UI
 
-st.title(" Video Semantic Search AI")
-
-uploaded_file = st.file_uploader(
-    "Choose a video",
-    type=["mp4"],
-)
-
-st.write(uploaded_file)
-
-st.stop()
-
 st.caption(
     "Upload videos, build a searchable knowledge base, and ask natural language questions."
 )
