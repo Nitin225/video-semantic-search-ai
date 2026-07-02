@@ -4,6 +4,20 @@ import os
 
 TARGET_WORDS = 120
 
+# Lazy loaded Whisper model
+MODEL = None
+
+
+def get_model():
+    global MODEL
+
+    if MODEL is None:
+        MODEL = whisper.load_model("base")
+        # If Railway still runs out of memory,
+        # replace "base" with "tiny"
+
+    return MODEL
+
 
 def merge_segments(segments, target_words=TARGET_WORDS):
     merged = []
@@ -86,6 +100,8 @@ def process_audio(audio_path, model):
 
     print(f"Merged Chunks            : {len(chunks)}")
 
+    os.makedirs("json_files", exist_ok=True)
+
     json_name = os.path.splitext(file)[0] + ".json"
     json_path = os.path.join("json_files", json_name)
 
@@ -97,7 +113,7 @@ def process_audio(audio_path, model):
 
 def speech_to_text(audio_path=None):
 
-    model = whisper.load_model("small")
+    model = get_model()
 
     os.makedirs("json_files", exist_ok=True)
 
