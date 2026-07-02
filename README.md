@@ -7,7 +7,7 @@ sdk: docker
 app_port: 8501
 pinned: false
 license: mit
-short_description: AI-powered RAG system for semantic video search and question answering.
+short_description: RAG-based video search.
 ---
 
 
