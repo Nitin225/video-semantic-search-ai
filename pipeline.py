@@ -4,11 +4,19 @@ from speech_to_text import speech_to_text
 from read_chunks import embed_chunks, append_chunks
 from faiss_index import append_faiss
 from query import reload_index
+import os
 
 
 def run_incremental_pipeline(uploaded_file):
 
     try:
+        
+        # Duplicate upload check
+        video_name = os.path.splitext(uploaded_file.name)[0]
+        json_file = os.path.join("json_files", f"{video_name}.json")
+
+        if os.path.exists(json_file):
+            return False, "This video has already been indexed."
 
         # Step 1
         video_path = save_uploaded_video(uploaded_file)
