@@ -1,0 +1,15 @@
+.venv
+__pycache__
+*.pyc
+
+videos
+audios
+json_files
+
+embeddings.npy
+faiss.index
+chunks_with_source.json
+
+.git
+.gitignore
+.env
