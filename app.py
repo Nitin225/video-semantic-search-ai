@@ -18,6 +18,8 @@ st.set_page_config(
 
 #  Main UI
 
+st.title(" Video Semantic Search AI")
+
 st.caption(
     "Upload videos, build a searchable knowledge base, and ask natural language questions."
 )
