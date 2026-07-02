@@ -6,7 +6,11 @@ json_files/*
 chunks_with_source.json
 embeddings.npy
 faiss.index
+
 __pycache__/
 *.pyc
+
+.venv/
+.vscode/
 
 .env

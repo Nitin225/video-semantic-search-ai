@@ -31,9 +31,17 @@ def process_videos(video_path=None):
                     output_path,
                 ],
                 check=True,
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.PIPE,
             )
-        except subprocess.CalledProcessError:
-            print(f"Error processing: {file}")
+
+        except FileNotFoundError:
+            print("FFmpeg is not installed or not found in PATH.")
+            return None
+
+        except subprocess.CalledProcessError as e:
+            print(f"Error processing {file}")
+            print(e.stderr.decode(errors="ignore"))
             return None
 
         return output_path
@@ -60,10 +68,17 @@ def process_videos(video_path=None):
                         output_path,
                     ],
                     check=True,
+                    stdout=subprocess.DEVNULL,
+                    stderr=subprocess.PIPE,
                 )
 
-            except subprocess.CalledProcessError:
-                print(f"Error processing: {file}")
+            except FileNotFoundError:
+                print("FFmpeg is not installed or not found in PATH.")
+                continue
+
+            except subprocess.CalledProcessError as e:
+                print(f"Error processing {file}")
+                print(e.stderr.decode(errors="ignore"))
 
         else:
             print(f"Skipping: {file}")

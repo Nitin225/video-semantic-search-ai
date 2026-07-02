@@ -9,4 +9,4 @@ def save_uploaded_video(uploaded_file):
     with open(video_path, "wb") as f:
         f.write(uploaded_file.getbuffer())
 
-    return video_path
+    return os.path.abspath(video_path)
