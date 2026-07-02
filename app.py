@@ -1,6 +1,7 @@
 import os
 import logging
 import streamlit as st
+
 from pipeline import run_incremental_pipeline
 from query import search
 from llm import generate_answer
@@ -8,17 +9,24 @@ from llm import generate_answer
 os.environ["STREAMLIT_SUPPRESS_CONFIG_WARNINGS"] = "true"
 logging.getLogger("transformers").setLevel(logging.ERROR)
 
-st.title(" Video Semantic Search")
-
-st.caption(
-    "Upload a video, build a searchable knowledge base, and ask questions about its content."
+st.set_page_config(
+    page_title="Video Semantic Search AI",
+    page_icon="",
+    layout="centered",
+    initial_sidebar_state="collapsed"
 )
 
-# Upload Section
+#  Main UI
 
-st.header("Upload & Index")
+st.title(" Video Semantic Search AI")
 
+st.caption(
+    "Upload videos, build a searchable knowledge base, and ask natural language questions."
+)
 
+# Upload Section 
+
+st.header(" Upload & Index Video")
 
 uploaded_file = st.file_uploader(
     "Choose a video",
@@ -27,16 +35,26 @@ uploaded_file = st.file_uploader(
 
 if uploaded_file is not None:
 
-    if st.button("Index Video"):
+    st.info(f"Selected file: **{uploaded_file.name}**")
 
-        with st.spinner("Processing video... This may take a few minutes."):
-            
-            success, message = run_incremental_pipeline(uploaded_file)
+    if st.button(" Index Video", use_container_width=True):
+
+        status_box = st.empty()
+
+        def update_status(message):
+            status_box.info(message)
+
+        success, message = run_incremental_pipeline(
+            uploaded_file,
+            status_callback=update_status
+        )
+
+        status_box.empty()
 
         if success:
             st.success(message)
         else:
-            st.error(message)
+            st.warning(message)
 
 st.divider()
 
@@ -44,9 +62,11 @@ st.divider()
 
 st.header(" Ask Questions")
 
-query = st.text_input("Ask a question:")
+query = st.text_input(
+    "Ask anything about the indexed videos..."
+)
 
-if query:
+if query.strip():
 
     try:
         results = search(query)
@@ -56,20 +76,8 @@ if query:
         st.stop()
 
     if not results:
-        st.warning("No relevant context found. Try a more specific question.")
+        st.warning("No relevant context found.")
         st.stop()
-
-    with st.expander(" Sources"):
-
-        for r in results:
-
-            st.write(r["text"])
-
-            st.caption(
-                f"Source: {r['source']} | {r['start']:.2f}s - {r['end']:.2f}s"
-            )
-
-            st.divider()
 
     with st.spinner("Generating answer..."):
 
@@ -80,11 +88,49 @@ if query:
             st.error(f"Answer generation failed: {e}")
             answer = ""
 
-    st.subheader("Answer")
+    st.subheader(" Answer")
 
     if answer.strip():
-        st.write(answer)
-
+        st.markdown(answer)
     else:
-        st.info("Could not generate an answer right now.")
-        
+        st.info("Could not generate an answer.")
+
+    st.divider()
+
+    with st.expander(" Retrieved Sources"):
+
+        for i, r in enumerate(results, start=1):
+
+            st.markdown(f"**Source {i}**")
+
+            st.caption(
+                f"📄 {r['source']} | ⏱ {r['start']:.2f}s – {r['end']:.2f}s"
+            )
+
+            st.write(r["text"])
+
+            if i != len(results):
+                st.divider()
+
+st.divider()
+
+#  About
+
+with st.expander(" About This Project"):
+
+    st.markdown("""
+### Tech Stack
+
+- **Speech-to-Text:** Whisper Small
+- **Embeddings:** all-MiniLM-L6-v2
+- **Vector Search:** FAISS
+- **LLM:** Llama 3.1 8B (Groq)
+
+### Features
+
+- Semantic search over video transcripts
+- Incremental video indexing
+- Automatic transcript chunking
+- Duplicate upload detection
+- Grounded question answering using RAG
+""")
