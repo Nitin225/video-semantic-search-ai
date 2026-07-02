@@ -1,3 +1,16 @@
+---
+title: Video Semantic Search Ai
+emoji: 📉
+colorFrom: indigo
+colorTo: gray
+sdk: docker
+pinned: false
+license: mit
+short_description: AI-powered RAG system for semantic video search and question
+---
+
+Check out the configuration reference at https://huggingface.co/docs/hub/spaces-config-reference
+
 #  Video Semantic Search AI
 
 An AI-powered Retrieval-Augmented Generation (RAG) application that enables semantic search and question answering over uploaded videos using Whisper, FAISS, Sentence Transformers, and Groq Llama 3.1.
