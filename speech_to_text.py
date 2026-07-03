@@ -3,8 +3,6 @@ import json
 import os
 
 TARGET_WORDS = 120
-
-# Lazy loaded Whisper model
 MODEL = None
 
 
@@ -13,8 +11,6 @@ def get_model():
 
     if MODEL is None:
         MODEL = whisper.load_model("base")
-        # If Railway still runs out of memory,
-        # replace "base" with "tiny"
 
     return MODEL
 
